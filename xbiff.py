@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 '''
-  Copyright (C) 2013 Peter Scott - p.scott@shu.ac.uk
+  Copyright (C) 2014 Peter Scott - p.scott@shu.ac.uk
 
   Licence
   ~~~~~~~
@@ -19,7 +19,7 @@
 
   Version
   ~~~~~~~
-  Tue Jan 15 13:36:26 GMT 2013
+  Sat Mar 15 16:44:06 UTC 2014
 
 
   Purpose
@@ -43,11 +43,8 @@
       # cat /etc/gdm/PostSession/Default
       #!/bin/sh
 
-      export RUNNING_UNDER_GDM
-      test -f $HOME/.bash_logout && . $HOME/.bash_logout
+      test -f $HOME/.bash_logout && su $USER -c $HOME/.bash_logout
       #
-
-  Be warned that '.bash_logout' gets run as root!
 
 
   Other programmes used
@@ -78,12 +75,13 @@ from subprocess import *
 
 def alert (message, previousPid, timeout):
   ''' ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  display a message with 'xmessage'
+    display a message with 'xmessage'
 
-  There are two kinds of message: email and other.  Email messages are the
-  main ones; they have no timeout but can be replaced with a new message.
-  Other messages have a timeout.
+    There are two kinds of message: email and other.  Email messages
+    are the main ones; they have no timeout but can be replaced with a
+    new message.  Other messages have a timeout.
   '''
+
   xmessComm = 'xmessage -geom -0+0 \
                   -xrm ".Xmessage.Form.Text.scrollVertical:    whenNeeded" \
                   -xrm ".Xmessage.Form.Text.scrollHorizontal:  whenNeeded" \
@@ -105,11 +103,12 @@ def alert (message, previousPid, timeout):
 
 def eraseAlert (pid):
   ''' ~~~~~~~~~~~~~~~
-  Use 'kill' to remove the previous 'xmessage'
+    Use 'kill' to remove the previous 'xmessage'
 
-  It doesn't matter that 'kill' will fail if the user has already OK-ed
-  the previous message
+    It doesn't matter that 'kill' will fail if the user has already
+    OK-ed the previous message
   '''
+
   if pid:
       junk = Popen( '2> /dev/null kill ' + str(pid), shell=True)
 
@@ -119,6 +118,7 @@ if __name__ == '__main__':
     unread = previous = xmessagePID = announced = 0
     seconds = POLL_INTERVAL * 60
 
+    time.sleep( 5)             # give desktop time to appear
     while True:
         try:
             mail = imaplib.IMAP4_SSL( SERVER)
@@ -143,9 +143,8 @@ if __name__ == '__main__':
                      ess = 's"'
                 if unread > previous:
                     junk = Popen( 'beep', shell=True)
-                xmessagePID = alert( str(unread) + '" email' + ess, \
-                                                                xmessagePID, 0)
-                announced = 1
+                announced = xmessagePID = alert( str(unread) + '" email' + \
+                                                           ess, xmessagePID, 0)
 
         if not announced:
             announced = alert( "xbiff.py: checking " + SERVER + " every " + \
