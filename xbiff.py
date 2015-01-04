@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 '''
-  Copyright (C) 2014 Peter Scott - p.scott@shu.ac.uk
+  Copyright (C) 2015 Peter Scott - p.scott@shu.ac.uk
 
   Licence
   ~~~~~~~
