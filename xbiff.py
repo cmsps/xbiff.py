@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 '''
-  Copyright (C) 2015 Peter Scott - p.scott@shu.ac.uk
+  Copyright (C) 2016 Peter Scott - p.scott@shu.ac.uk
 
   Licence
   ~~~~~~~
@@ -19,7 +19,7 @@
 
   Version
   ~~~~~~~
-  Sat Mar 15 16:44:06 UTC 2014
+  Tue Nov 24 16:35:55 GMT 2015
 
 
   Purpose
@@ -44,7 +44,6 @@
       #!/bin/sh
 
       test -f $HOME/.bash_logout && su $USER -c $HOME/.bash_logout
-      #
 
 
   Other programmes used
@@ -82,7 +81,7 @@ def alert (message, previousPid, timeout):
     new message.  Other messages have a timeout.
   '''
 
-  xmessComm = 'xmessage -geom -0+0 \
+  xmessComm = 'LANG= xmessage -geom -0+0 \
                   -xrm ".Xmessage.Form.Text.scrollVertical:    whenNeeded" \
                   -xrm ".Xmessage.Form.Text.scrollHorizontal:  whenNeeded" \
                   -xrm ".Xmessage.*.background:                white" \
