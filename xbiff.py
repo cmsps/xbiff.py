@@ -19,7 +19,7 @@
 
   Version
   ~~~~~~~
-  Tue Nov 24 16:35:55 GMT 2015
+  Thu Nov 10 14:17:18 GMT 2016
 
 
   Purpose
@@ -132,18 +132,18 @@ if __name__ == '__main__':
             unread = previous
 
         if unread != previous:
-            if (unread == 0):
+            if unread == 0:
                 eraseAlert( xmessagePID)
                 xmessagePID = 0
             else:
-                if unread == 1:
-                     ess = '"'
-                else:
-                     ess = 's"'
                 if unread > previous:
+                    if unread == 1:
+                        ess = '"'
+                    else:
+                        ess = 's"'
                     junk = Popen( 'beep', shell=True)
-                announced = xmessagePID = alert( str(unread) + '" email' + \
-                                                           ess, xmessagePID, 0)
+                    announced = xmessagePID = alert( str(unread) + \
+                                               '" email' + ess, xmessagePID, 0)
 
         if not announced:
             announced = alert( "xbiff.py: checking " + SERVER + " every " + \
