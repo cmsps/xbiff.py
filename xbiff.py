@@ -19,7 +19,7 @@
 
   Version
   ~~~~~~~
-  Thu Nov 10 14:17:18 GMT 2016
+  Sun Feb 19 13:12:54 GMT 2017
 
 
   Purpose
@@ -38,13 +38,6 @@
   However, it should be started in '.bash_profile' and stopped in
   '.bash_logout' under Unix or Linux.
 
-  With Gnome you need the following to ensure '.bash_logout' gets run:
-
-      # cat /etc/gdm/PostSession/Default
-      #!/bin/sh
-
-      test -f $HOME/.bash_logout && su $USER -c $HOME/.bash_logout
-
 
   Other programmes used
   ~~~~~~~~~~~~~~~~~~~~~
@@ -52,9 +45,6 @@
 
   'xmessage' is used because it is neater than GTK notifications and
   better documented.
-
-  For 'beep' to work, the command must be owned by root and be setuid
-  (chmod 4755).  Without the root setuid, 'beep' only works in terminals.
 
 
   Configuration
@@ -81,7 +71,7 @@ def alert (message, previousPid, timeout):
     new message.  Other messages have a timeout.
   '''
 
-  xmessComm = 'LANG= xmessage -geom -0+0 \
+  xmessComm = 'LANG= xmessage -default okay -geom -0+0 \
                   -xrm ".Xmessage.Form.Text.scrollVertical:    whenNeeded" \
                   -xrm ".Xmessage.Form.Text.scrollHorizontal:  whenNeeded" \
                   -xrm ".Xmessage.*.background:                white" \
@@ -141,7 +131,7 @@ if __name__ == '__main__':
                         ess = '"'
                     else:
                         ess = 's"'
-                    junk = Popen( 'beep', shell=True)
+                    junk = Popen( 'sudo -n /usr/bin/beep', shell=True)
                     announced = xmessagePID = alert( str(unread) + \
                                                '" email' + ess, xmessagePID, 0)
 
