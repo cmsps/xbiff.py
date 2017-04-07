@@ -19,7 +19,7 @@
 
   Version
   ~~~~~~~
-  Sun Feb 19 13:12:54 GMT 2017
+  Fri Apr 7 16:52:19 BST 2017
 
 
   Purpose
@@ -45,6 +45,9 @@
 
   'xmessage' is used because it is neater than GTK notifications and
   better documented.
+
+  For 'beep' to work, the command must be owned by root and be setuid
+  (chmod 4755).  Without the root setuid, 'beep' only works in terminals.
 
 
   Configuration
@@ -131,7 +134,7 @@ if __name__ == '__main__':
                         ess = '"'
                     else:
                         ess = 's"'
-                    junk = Popen( 'sudo -n /usr/bin/beep', shell=True)
+                    junk = Popen( 'beep', shell=True)
                     announced = xmessagePID = alert( str(unread) + \
                                                '" email' + ess, xmessagePID, 0)
 
