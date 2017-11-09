@@ -19,7 +19,7 @@
 
   Version
   ~~~~~~~
-  Fri Apr 7 16:52:19 BST 2017
+  Thu Nov 9 17:43:57 GMT 2017
 
 
   Purpose
@@ -61,7 +61,7 @@ PASSWORD        = 'YOUR_PASSWORD'
 POLL_INTERVAL   = 2                    # minutes
 
 
-import imaplib, time
+import imaplib, time, os
 from subprocess import *
 
 
@@ -74,7 +74,7 @@ def alert (message, previousPid, timeout):
     new message.  Other messages have a timeout.
   '''
 
-  xmessComm = 'LANG= xmessage -default okay -geom -0+0 \
+  xmessComm = 'LANG= xmessage -default okay -geom -1366+0 \
                   -xrm ".Xmessage.Form.Text.scrollVertical:    whenNeeded" \
                   -xrm ".Xmessage.Form.Text.scrollHorizontal:  whenNeeded" \
                   -xrm ".Xmessage.*.background:                white" \
@@ -117,9 +117,14 @@ if __name__ == '__main__':
             mail.login( ACCOUNT_NAME, PASSWORD)
             status = mail.status( 'INBOX', '(RECENT UNSEEN MESSAGES)')[1][0]
             mail.logout()
+            os.close( 3)    # avoid passing socket to children
             unread = int( status.split()[6].rstrip( ')'))
 
         except:
+            try:                   # avoid passing socket to children
+                os.close( 3)
+            except:
+                pass
             announced = alert( "xbiff.py: couldn't login to " + SERVER, + \
                                                                   0, seconds+2)
             unread = previous
