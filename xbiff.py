@@ -19,7 +19,7 @@
 
   Version
   ~~~~~~~
-  Thu Nov 9 17:51:44 GMT 2017
+  Thu Nov 9 22:25:58 GMT 2017
 
 
   Purpose
@@ -67,11 +67,11 @@ from subprocess import *
 
 def alert (message, previousPid, timeout):
   ''' ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    display a message with 'xmessage'
+  display a message with 'xmessage'
 
-    There are two kinds of message: email and other.  Email messages
-    are the main ones; they have no timeout but can be replaced with a
-    new message.  Other messages have a timeout.
+  There are two kinds of message: email and other.  Email messages
+  are the main ones; they have no timeout but can be replaced with a
+  new message.  Other messages have a timeout.
   '''
 
   xmessComm = 'LANG= xmessage -default okay -geom -1366+0 \
@@ -83,8 +83,9 @@ def alert (message, previousPid, timeout):
                   -xrm ".Xmessage.Form.Command.foreground:     black" \
                   -xrm ".Xmessage.Form.Command.background:     green"'
   if timeout:
-      xmessComm = xmessComm + ' -timeout ' + str(timeout)
-  pid = Popen( xmessComm + ' "' + message + '"', shell=True).pid
+      xmessComm = xmessComm + ' -timeout ' + str( timeout)
+  pid = Popen( xmessComm + ' "' + message + '"', shell=True, \
+                                                            close_fds=True).pid
   if pid == 0:
       print 'Failed to send notification'
       sys.exit( 1)
@@ -95,14 +96,15 @@ def alert (message, previousPid, timeout):
 
 def eraseAlert (pid):
   ''' ~~~~~~~~~~~~~~~
-    Use 'kill' to remove the previous 'xmessage'
+  Use 'kill' to remove the previous 'xmessage'
 
-    It doesn't matter that 'kill' will fail if the user has already
-    OK-ed the previous message
+  It doesn't matter that 'kill' will fail if the user has already
+  OK-ed the previous message
   '''
 
   if pid:
-      junk = Popen( '2> /dev/null kill ' + str(pid), shell=True)
+      junk = Popen( '2> /dev/null kill ' + str( pid), shell=True, \
+                                                                close_fds=True)
 
 
 if __name__ == '__main__':
@@ -117,17 +119,9 @@ if __name__ == '__main__':
             mail.login( ACCOUNT_NAME, PASSWORD)
             status = mail.status( 'INBOX', '(RECENT UNSEEN MESSAGES)')[1][0]
             mail.logout()
-            try:                   # avoid passing socket to children
-                os.close( 3)
-            except:
-                pass
             unread = int( status.split()[6].rstrip( ')'))
 
         except:
-            try:                   # avoid passing socket to children
-                os.close( 3)
-            except:
-                pass
             announced = alert( "xbiff.py: couldn't login to " + SERVER, + \
                                                                   0, seconds+2)
             unread = previous
@@ -142,12 +136,12 @@ if __name__ == '__main__':
                         ess = '"'
                     else:
                         ess = 's"'
-                    junk = Popen( 'beep', shell=True)
-                    announced = xmessagePID = alert( str(unread) + \
-                                               '" email' + ess, xmessagePID, 0)
+                    junk = Popen( 'beep', shell=False, close_fds=True)
+                    announced = xmessagePID = \
+                         alert( str( unread) + '" email' + ess, xmessagePID, 0)
 
         if not announced:
             announced = alert( "xbiff.py: checking " + SERVER + " every " + \
-                                        str(POLL_INTERVAL) + " minutes", 0, 10)
+                                       str( POLL_INTERVAL) + " minutes", 0, 10)
         previous = unread
         time.sleep( seconds)
