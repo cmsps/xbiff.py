@@ -19,7 +19,7 @@
 
   Version
   ~~~~~~~
-  Thu Nov 9 17:43:57 GMT 2017
+  Thu Nov 9 17:51:44 GMT 2017
 
 
   Purpose
@@ -117,7 +117,10 @@ if __name__ == '__main__':
             mail.login( ACCOUNT_NAME, PASSWORD)
             status = mail.status( 'INBOX', '(RECENT UNSEEN MESSAGES)')[1][0]
             mail.logout()
-            os.close( 3)    # avoid passing socket to children
+            try:                   # avoid passing socket to children
+                os.close( 3)
+            except:
+                pass
             unread = int( status.split()[6].rstrip( ')'))
 
         except:
