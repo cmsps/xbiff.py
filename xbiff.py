@@ -19,7 +19,7 @@
 
   Version
   ~~~~~~~
-  Wed Nov 15 19:10:21 GMT 2017
+  Wed Nov 15 22:49:27 GMT 2017
 
 
   Purpose
@@ -27,6 +27,8 @@
   I call this very simple programme 'xbiff.py'.  It watches an IMAP
   account and tells you with a beep and a very small message when you
   get a new email.  It occupies no permanent screen space.
+
+  It has been tested with Python 2.7 and Python 3.6.
 
 
   Invocation
@@ -43,7 +45,7 @@
   ~~~~~~~~~~~~~~~~~~~~~
   'xmessage' and 'beep'
 
-  'xmessage' is used because it is well documented, and I hate Gnome and
+  'xmessage' is used because it is well documented and, I hate Gnome and
   desktops in general.
 
   For 'beep' to work, the command must be owned by root and be setuid
@@ -88,7 +90,7 @@ def alert (message, previousPid = 0, timeout = 0):
       message = 'xbiff.py: ' + message
   pid = Popen( xmessComm + '"' + message + '"', shell=True, close_fds=True).pid
   if pid == 0:
-      print( 'Failed to send notification')   # this will look odd in python 3!
+      print( 'Failed to send notification')   # this may look odd in python2.7
       sys.exit( 1)
   time.sleep( 2)            # give new alert time to appear -- to avoid flicker
   eraseAlert( previousPid)
@@ -122,7 +124,8 @@ if __name__ == '__main__':
             stage = 1
             mail.login( ACCOUNT_NAME, PASSWORD)
             stage = 2
-            status = mail.status( 'INBOX', '(RECENT UNSEEN MESSAGES)')[1][0]
+            status = (mail.status( 'INBOX', \
+                            '(RECENT UNSEEN MESSAGES)')[1][0]).decode( 'utf-8')
             stage = 3
             mail.logout()
             unread = int( status.split()[6].rstrip( ')'))
@@ -138,6 +141,9 @@ if __name__ == '__main__':
                 announced = alert( "couldn't read inbox from " + SERVER + \
                                             ' (' + details + ')', 0, seconds+2)
             else:
+
+                # treat logout failure as a complete failure -- far simpler
+                #
                 announced = alert( "couldn't logout from " + SERVER + \
                                             ' (' + details + ')', 0, seconds+2)
             if connection is not None:
