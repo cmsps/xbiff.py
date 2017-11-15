@@ -19,7 +19,7 @@
 
   Version
   ~~~~~~~
-  Thu Nov 9 22:25:58 GMT 2017
+  Wed Nov 15 19:10:21 GMT 2017
 
 
   Purpose
@@ -43,8 +43,8 @@
   ~~~~~~~~~~~~~~~~~~~~~
   'xmessage' and 'beep'
 
-  'xmessage' is used because it is neater than GTK notifications and
-  better documented.
+  'xmessage' is used because it is well documented, and I hate Gnome and
+  desktops in general.
 
   For 'beep' to work, the command must be owned by root and be setuid
   (chmod 4755).  Without the root setuid, 'beep' only works in terminals.
@@ -61,35 +61,36 @@ PASSWORD        = 'YOUR_PASSWORD'
 POLL_INTERVAL   = 2                    # minutes
 
 
-import imaplib, time, os
-from subprocess import *
+import imaplib, time, socket, sys, re, os
+from subprocess import Popen
 
 
-def alert (message, previousPid, timeout):
-  ''' ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def alert (message, previousPid = 0, timeout = 0):
+  ''' ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   display a message with 'xmessage'
 
-  There are two kinds of message: email and other.  Email messages
-  are the main ones; they have no timeout but can be replaced with a
-  new message.  Other messages have a timeout.
+  There are two kinds of message: email and other.  Email messages are
+  the main ones; they have no timeout but may be replaced by a new email
+  message.  Other messages have a timeout and are prefixed with
+  'xbiff.py: '.
   '''
 
-  xmessComm = 'LANG= xmessage -default okay -geom -1366+0 \
-                  -xrm ".Xmessage.Form.Text.scrollVertical:    whenNeeded" \
-                  -xrm ".Xmessage.Form.Text.scrollHorizontal:  whenNeeded" \
-                  -xrm ".Xmessage.*.background:                white" \
-                  -xrm ".Xmessage.*.foreground:                black" \
-                  -xrm ".Xmessage.Form.Text.borderColor:       white" \
-                  -xrm ".Xmessage.Form.Command.foreground:     black" \
-                  -xrm ".Xmessage.Form.Command.background:     green"'
+  xmessComm = "LANG= xmessage -default okay -geom -0+0 \
+                  -xrm '.Xmessage.Form.Text.scrollVertical:    whenNeeded' \
+                  -xrm '.Xmessage.Form.Text.scrollHorizontal:  whenNeeded' \
+                  -xrm '.Xmessage.*.background:                white' \
+                  -xrm '.Xmessage.*.foreground:                black' \
+                  -xrm '.Xmessage.Form.Text.borderColor:       white' \
+                  -xrm '.Xmessage.Form.Command.foreground:     black' \
+                  -xrm '.Xmessage.Form.Command.background:     green' "
   if timeout:
-      xmessComm = xmessComm + ' -timeout ' + str( timeout)
-  pid = Popen( xmessComm + ' "' + message + '"', shell=True, \
-                                                            close_fds=True).pid
+      xmessComm = xmessComm + '-timeout ' + str( timeout) + ' '
+      message = 'xbiff.py: ' + message
+  pid = Popen( xmessComm + '"' + message + '"', shell=True, close_fds=True).pid
   if pid == 0:
-      print 'Failed to send notification'
+      print( 'Failed to send notification')   # this will look odd in python 3!
       sys.exit( 1)
-  time.sleep( 2)             # give new xmess time to appear to avoid flicker
+  time.sleep( 2)            # give new alert time to appear -- to avoid flicker
   eraseAlert( previousPid)
   return pid
 
@@ -106,25 +107,53 @@ def eraseAlert (pid):
       junk = Popen( '2> /dev/null kill ' + str( pid), shell=True, \
                                                                 close_fds=True)
 
-
 if __name__ == '__main__':
-
     unread = previous = xmessagePID = announced = 0
     seconds = POLL_INTERVAL * 60
 
+    socket.setdefaulttimeout( 10)
     time.sleep( 5)             # give desktop time to appear
     while True:
+        connection = None
         try:
+            stage = 0
             mail = imaplib.IMAP4_SSL( SERVER)
+            connection = mail.socket()
+            stage = 1
             mail.login( ACCOUNT_NAME, PASSWORD)
+            stage = 2
             status = mail.status( 'INBOX', '(RECENT UNSEEN MESSAGES)')[1][0]
+            stage = 3
             mail.logout()
             unread = int( status.split()[6].rstrip( ')'))
+        except Exception as details:
+            details = re.sub( "[][(),']", '', str( details))
+            if stage == 0:
+                announced = alert( "couldn't connect to " + SERVER + \
+                                            ' (' + details + ')', 0, seconds+2)
+            elif stage == 1:
+                announced = alert( "couldn't login to " + SERVER + \
+                                            ' (' + details + ')', 0, seconds+2)
+            elif stage == 2:
+                announced = alert( "couldn't read inbox from " + SERVER + \
+                                            ' (' + details + ')', 0, seconds+2)
+            else:
+                announced = alert( "couldn't logout from " + SERVER + \
+                                            ' (' + details + ')', 0, seconds+2)
+            if connection is not None:
 
-        except:
-            announced = alert( "xbiff.py: couldn't login to " + SERVER, + \
-                                                                  0, seconds+2)
+                 # with python2.7 on fedora 26 imaplib tries to close
+                 # the socket, but passes on the exception.  This forces
+                 # the closure.
+                 #
+                 os.closerange( 3,5)
+
             unread = previous
+
+        # this isn't needed but it seemed to avoid some lengthy waits
+        # on the IMAP socket.  See comment above.
+        #
+        mail = None
 
         if unread != previous:
             if unread == 0:
@@ -133,15 +162,15 @@ if __name__ == '__main__':
             else:
                 if unread > previous:
                     if unread == 1:
-                        ess = '"'
+                        ess = ''
                     else:
-                        ess = 's"'
+                        ess = 's'
                     junk = Popen( 'beep', shell=False, close_fds=True)
                     announced = xmessagePID = \
-                         alert( str( unread) + '" email' + ess, xmessagePID, 0)
+                         alert( str( unread) + ' email' + ess, xmessagePID)
 
         if not announced:
-            announced = alert( "xbiff.py: checking " + SERVER + " every " + \
-                                       str( POLL_INTERVAL) + " minutes", 0, 10)
+            announced = alert( 'checking ' + SERVER + ' every ' + \
+                                       str( POLL_INTERVAL) + ' minutes', 0, 10)
         previous = unread
         time.sleep( seconds)
