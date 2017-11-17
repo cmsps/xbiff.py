@@ -2,6 +2,9 @@
 '''
   Copyright (C) 2017 Peter Scott - p.scott@shu.ac.uk
 
+  Fri Nov 17 09:39:06 GMT 2017
+
+
   Licence
   ~~~~~~~
   This program is free software: you can redistribute it and/or modify
@@ -16,11 +19,6 @@
 
   You should have received a copy of the GNU General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-  Version
-  ~~~~~~~
-  Wed Nov 15 22:49:27 GMT 2017
-
 
   Purpose
   ~~~~~~~
@@ -41,9 +39,9 @@
   '.bash_logout' under Unix or Linux.
 
 
-  Other programmes used
-  ~~~~~~~~~~~~~~~~~~~~~
-  'xmessage' and 'beep'
+  External programmes used:
+  ~~~~~~~~~~~~~~~~~~~~~~~~~
+  'kill', 'xmessage' and 'beep'
 
   'xmessage' is used because it is well documented and, I hate Gnome and
   desktops in general.
@@ -124,11 +122,15 @@ if __name__ == '__main__':
             stage = 1
             mail.login( ACCOUNT_NAME, PASSWORD)
             stage = 2
+
+            # The decode will be the default utf-8.  Should / could it be
+            # obtained from mail or connection?
+            #
             status = (mail.status( 'INBOX', \
-                            '(RECENT UNSEEN MESSAGES)')[1][0]).decode( 'utf-8')
+                                    '(RECENT UNSEEN MESSAGES)')[1][0]).decode()
+            unread = int( status.split()[6].rstrip( ')'))
             stage = 3
             mail.logout()
-            unread = int( status.split()[6].rstrip( ')'))
         except Exception as details:
             details = re.sub( "[][(),']", '', str( details))
             if stage == 0:
@@ -142,7 +144,7 @@ if __name__ == '__main__':
                                             ' (' + details + ')', 0, seconds+2)
             else:
 
-                # treat logout failure as a complete failure -- far simpler
+                # simpler to treat (unlikely) failed logout as a complete fail
                 #
                 announced = alert( "couldn't logout from " + SERVER + \
                                             ' (' + details + ')', 0, seconds+2)
@@ -154,7 +156,7 @@ if __name__ == '__main__':
                  #
                  os.closerange( 3,5)
 
-            unread = previous
+            unread = previous        # i.e. unchanged
 
         # this isn't needed but it seemed to avoid some lengthy waits
         # on the IMAP socket.  See comment above.
@@ -165,15 +167,14 @@ if __name__ == '__main__':
             if unread == 0:
                 eraseAlert( xmessagePID)
                 xmessagePID = 0
-            else:
-                if unread > previous:
-                    if unread == 1:
-                        ess = ''
-                    else:
-                        ess = 's'
-                    junk = Popen( 'beep', shell=False, close_fds=True)
-                    announced = xmessagePID = \
-                         alert( str( unread) + ' email' + ess, xmessagePID)
+            elif unread > previous:
+                if unread == 1:
+                    ess = ''
+                else:
+                    ess = 's'
+                junk = Popen( 'beep', shell=False, close_fds=True)
+                announced = xmessagePID = alert( str( unread) + \
+                                                   ' email' + ess, xmessagePID)
 
         if not announced:
             announced = alert( 'checking ' + SERVER + ' every ' + \
