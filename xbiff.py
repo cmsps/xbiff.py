@@ -2,7 +2,7 @@
 '''
   Copyright (C) 2017 Peter Scott - p.scott@shu.ac.uk
 
-  Fri Nov 17 09:39:06 GMT 2017
+  Fri Nov 17 17:27:43 GMT 2017
 
 
   Licence
@@ -122,13 +122,8 @@ if __name__ == '__main__':
             stage = 1
             mail.login( ACCOUNT_NAME, PASSWORD)
             stage = 2
-
-            # The decode will be the default utf-8.  Should / could it be
-            # obtained from mail or connection?
-            #
-            status = (mail.status( 'INBOX', \
-                                    '(RECENT UNSEEN MESSAGES)')[1][0]).decode()
-            unread = int( status.split()[6].rstrip( ')'))
+            status = (mail.status( 'INBOX', '(UNSEEN)')[1][0]).decode()
+            unread = int( status.split()[2].rstrip( ')'))
             stage = 3
             mail.logout()
         except Exception as details:
