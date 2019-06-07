@@ -147,7 +147,6 @@ if __name__ == '__main__':
   unread = previous = xmessagePID = announced = 0
   seconds = int( POLL_INTERVAL) * 60
 
-  file = open("/home/cmsps/python/debug", "a")
   getArgs()
   socket.setdefaulttimeout( 10)
   time.sleep( 5)             # give desktop time to appear
@@ -166,8 +165,6 @@ if __name__ == '__main__':
           mail.logout()
       except Exception as details:
           details = re.sub( "[][(),']", '', str( details))
-          file.write( 'Gmail failed' + details + '\n')
-          file.flush()
           if stage == 0:
               announced = alert( "couldn't connect to " + SERVER + \
                                             ' (' + details + ')', 0, seconds+2)
