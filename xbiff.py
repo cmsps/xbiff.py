@@ -1,8 +1,8 @@
-#!/usr/bin/python3
+#!/usr/bin/env python
 '''
   Copyright (C) 2019 Peter Scott - peterscott@pobox.com
 
-  Mon Feb 12 22:44:05 GMT 2018
+  Version: Wed Aug 14 19:02:03 BST 2019
 
 
   Licence
@@ -26,11 +26,12 @@
   account and tells you with a beep and a very small message when you
   get a new email.  It occupies no permanent screen space.
 
-  By default, 'xbiff.py' alerts you when the number of unread emails
-  goes up.  The "-a" option causes it to update its display if the number
-  changes in either direction.
+  By default, 'xbiff.py' updates the display and beeps when the number
+  of unread emails goes up.  The "-a" option causes it to update the
+  display (but not to beep) if the number goes down.
 
-  It has been tested with Python 2.7 and Python 3.6.
+  It runs with Python2 or Python3; it has been tested with Python 2.7
+  and Python 3.7.
 
 
   Invocation
@@ -47,8 +48,8 @@
   ~~~~~~~~~~~~~~~~~~~~~~~~~
   'kill', 'xmessage' and 'beep'
 
-  'xmessage' is used because it is well documented and because I hate
-  Gnome, and desktops in general.
+  'xmessage' is used because it is well documented and, also, because
+  I hate Gnome, and desktops in general.
 
   For 'beep' to work, the command must be owned by root and be setuid
   (chmod 4755).  Without the root setuid, 'beep' only works in terminals.
