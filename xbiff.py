@@ -2,7 +2,7 @@
 '''
   Copyright (C) 2020 Peter Scott - peterscott@pobox.com
 
-  Version: Wed Aug 14 19:02:03 BST 2019
+  Version: Mon Jan 20 19:54:41 GMT 2020
 
 
   Licence
@@ -63,7 +63,7 @@
 SERVER          = 'imap.gmail.com'
 ACCOUNT_NAME    = 'YOUR_ACCOUNT_NAME'
 PASSWORD        = 'YOUR_PASSWORD'
-POLL_INTERVAL   = '2'                    # minutes, string!
+POLL_INTERVAL   = '10'       # minutes, string!  Minimum demanded by Gmail
 
 XMESS_COMM = "LANG= xmessage -default okay -geom -0+0 \
 -xrm '.Xmessage.Form.Text.scrollVertical:    whenNeeded' \
