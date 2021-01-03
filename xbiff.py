@@ -60,10 +60,10 @@
   Edit the following constants to suit yourself
 '''
 
-SERVER          = 'imap.gmail.com'
+SERVER          = 'imap.plus.net'
 ACCOUNT_NAME    = 'YOUR_ACCOUNT_NAME'
 PASSWORD        = 'YOUR_PASSWORD'
-POLL_INTERVAL   = '10'       # minutes, string!  Minimum demanded by Gmail
+POLL_INTERVAL   = '5'       # minutes, string!
 
 XMESS_COMM = "LANG= xmessage -default okay -geom -0+0 \
 -xrm '.Xmessage.Form.Text.scrollVertical:    whenNeeded' \
