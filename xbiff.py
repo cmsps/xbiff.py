@@ -2,7 +2,7 @@
 '''
   Copyright (C) 2023 Peter Scott - peterscott@pobox.com
 
-  Version: Mon Jan 20 19:54:41 GMT 2020
+  Version: Mon Jun 12 07:58:38 BST 2023
 
 
   Licence
@@ -82,10 +82,9 @@ def alert (message, previousPid = 0, timeout = 0):
   '''~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   display a message with 'xmessage'
 
-  There are two kinds of message: email and other.  Email messages
-  are the main ones; they have no timeout but may be replaced by a new
-  email message.  Other messages have a timeout and are prefixed with
-  the script name.
+  There are two kinds of message: email and other.  Email messages have
+  no timeout but may be replaced by a new email message.  Other messages
+  have a timeout and are prefixed with the script name.
   '''
 
   xmessComm = XMESS_COMM
