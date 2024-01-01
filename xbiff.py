@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 '''
-  Copyright (C) 2023 Peter Scott - peterscott@pobox.com
+  Copyright (C) 2024 Peter Scott - peterscott@pobox.com
 
   Version: Mon Jun 12 07:58:38 BST 2023
 
