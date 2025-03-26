@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 '''
-  Copyright (C) 2024 Peter Scott - peterscott@pobox.com
+  Copyright (C) 2025 Peter Scott - peterscott@pobox.com
 
   Version: Mon Jun 12 07:58:38 BST 2023
 
@@ -60,7 +60,7 @@
   Edit the following constants to suit yourself
 '''
 
-SERVER          = 'imap.plus.net'
+SERVER          = 'imap.fastmail.com'
 ACCOUNT_NAME    = 'YOUR_ACCOUNT_NAME'
 PASSWORD        = 'YOUR_PASSWORD'
 POLL_INTERVAL   = '5'       # minutes, string!
