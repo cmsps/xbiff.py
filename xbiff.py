@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 '''
-  Copyright (C) 2025 Peter Scott - peterscott@pobox.com
+  Copyright (C) 2026 Peter Scott - peterscott@pobox.com
 
   Version: Mon Jun 12 07:58:38 BST 2023
 
@@ -48,7 +48,7 @@
   ~~~~~~~~~~~~~~~~~~~~~~~~~
   'kill', 'xmessage' and 'beep'
 
-  'xmessage' is used because it is well documented and, also, because
+  'xmessage' is used because it has a 'man' page and, also, because
   I hate Gnome, and desktops in general.
 
   For 'beep' to work, the command must be owned by root and be setuid
